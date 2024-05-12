@@ -2,10 +2,10 @@ const User = require("../models/UserModel")
 const bcrypt = require("bcrypt")
 const { genneralAccessToken, genneralRefreshToken } = require("./JwtService")
 
-const createUser = (newUser) =>  {
-    return new Promise( async(resolve, reject) => {
+const createUser = (newUser) => {
+    return new Promise(async (resolve, reject) => {
         const { name, email, password, confirmPassword, phone } = newUser
-       try {
+        try {
             const checkUser = await User.findOne({
                 email: email
             })
@@ -29,17 +29,17 @@ const createUser = (newUser) =>  {
                     data: createdUser
                 })
             }
-       } catch (e){
-           reject(e)
-       }
-    })   
+        } catch (e) {
+            reject(e)
+        }
+    })
 }
 
-const loginUser = (userLogin) =>  {
-    return new Promise( async(resolve, reject) => {
-        const {email, password} = userLogin
+const loginUser = (userLogin) => {
+    return new Promise(async (resolve, reject) => {
+        const { email, password } = userLogin
         try {
-        //    console.log(userLogin)
+            //    console.log(userLogin)
             const checkUser = await User.findOne({
                 email: email
             })
@@ -52,38 +52,38 @@ const loginUser = (userLogin) =>  {
             }
             const comparePassword = bcrypt.compareSync(password, checkUser.password)
             // console.log('comparePassword', comparePassword)
-            if(!comparePassword) {
+            if (!comparePassword) {
                 resolve({
                     status: 'ERR',
                     message: 'The password or user is incorrect',
                 })
             }
-                const access_token = await genneralAccessToken({
-                    id: checkUser.id,
-                    isAdmin: checkUser.isAdmin
-                })
+            const access_token = await genneralAccessToken({
+                id: checkUser.id,
+                isAdmin: checkUser.isAdmin
+            })
 
-                const refresh_token = await genneralRefreshToken({
-                    id: checkUser.id,
-                    isAdmin: checkUser.isAdmin
-                })
+            const refresh_token = await genneralRefreshToken({
+                id: checkUser.id,
+                isAdmin: checkUser.isAdmin
+            })
 
-                // console.log('access_token', access_token)
-                resolve({
-                    status: 'OK',
-                    message: 'SUCCESS',
-                    access_token,
-                    refresh_token
-                })
-       } catch (e){
-           reject(e)
-       }
-    })   
+            // console.log('access_token', access_token)
+            resolve({
+                status: 'OK',
+                message: 'SUCCESS',
+                access_token,
+                refresh_token
+            })
+        } catch (e) {
+            reject(e)
+        }
+    })
 }
 
-const updateUser = (userId,data) =>  {
-    return new Promise( async(resolve, reject) => {
-       try {
+const updateUser = (userId, data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
             const checkUser = await User.findOne({
                 _id: userId
             })
@@ -93,7 +93,7 @@ const updateUser = (userId,data) =>  {
                     message: 'The user is not defined',
                 })
             }
-            const updatedUser = await User.findByIdAndUpdate(userId, data, { new: true})
+            const updatedUser = await User.findByIdAndUpdate(userId, data, { new: true })
             resolve({
                 status: 'OK',
                 message: 'SUCCESS',
@@ -103,12 +103,12 @@ const updateUser = (userId,data) =>  {
             reject(e)
         }
 
-    })   
+    })
 }
 
-const deleteUser = (userId) =>  {
-    return new Promise( async(resolve, reject) => {
-       try {
+const deleteUser = (userId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
             const checkUser = await User.findOne({
                 _id: userId
             })
@@ -127,12 +127,28 @@ const deleteUser = (userId) =>  {
             reject(e)
         }
 
-    })   
+    })
 }
 
-const getAllUser = () =>  {
-    return new Promise( async(resolve, reject) => {
-       try {
+const deleteManyUser = (ids) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+
+            await User.deleteMany({ _id: ids })
+            resolve({
+                status: 'OK',
+                message: 'DELETE USER SUCCESS',
+            })
+        } catch (e) {
+            reject(e)
+        }
+
+    })
+}
+
+const getAllUser = () => {
+    return new Promise(async (resolve, reject) => {
+        try {
             const allUser = await User.find()
             resolve({
                 status: 'OK',
@@ -143,13 +159,13 @@ const getAllUser = () =>  {
             reject(e)
         }
 
-    })   
+    })
 }
 
-const getDetailsUser = (userId) =>  {
+const getDetailsUser = (userId) => {
     // console.log("userId", userId)
-    return new Promise( async(resolve, reject) => {
-       try {
+    return new Promise(async (resolve, reject) => {
+        try {
             const user = await User.findOne({
                 _id: userId
             })
@@ -168,7 +184,7 @@ const getDetailsUser = (userId) =>  {
             reject(e)
         }
 
-    })   
+    })
 }
 
 
@@ -179,5 +195,6 @@ module.exports = {
     deleteUser,
     getAllUser,
     getDetailsUser,
-    
+    deleteManyUser
+
 }
