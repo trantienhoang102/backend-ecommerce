@@ -42,10 +42,8 @@ const createUser = async (req, res) => {
 const loginUser = async (req, res) => {
     try {
         const { email, password } = req.body
-        // console.log(req.body)
         const reg = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/
         const isCheckEmail = reg.test(email)
-        // console.log("email", email)
         if (!email || !password) {
             return res.status(200).json({
                 status: 'ERR',
@@ -55,24 +53,21 @@ const loginUser = async (req, res) => {
             return res.status(200).json({
                 status: 'ERR',
                 message: 'The input is email'
-
             })
         }
-        const response = await UserService.loginUser(req.body);
-        const { refresh_token, ...newResponse } = response
-        // console.log("cookie ne ", refresh_token)
+        const response = await UserService.loginUser(req.body)
+        const { refresh_token, ...newReponse } = response
         res.cookie('refresh_token', refresh_token, {
             httpOnly: true,
             secure: false,
-            samesite: 'strict'
+            sameSite: 'strict',
+            path: '/',
         })
-        return res.status(200).json(newResponse)
+        return res.status(200).json({ ...newReponse, refresh_token })
     } catch (e) {
-        // console.log(e);
         return res.status(404).json({
             message: e
-        }
-        )
+        })
     }
 }
 
@@ -172,16 +167,15 @@ const getDetailsUser = async (req, res) => {
 }
 
 const refreshToken = async (req, res) => {
-    // console.log('req.cookies.refresh_token', req.cookies)
     try {
-        const token = req.cookies.refresh_token;
+        let token = req.headers.token.split(' ')[1]
         if (!token) {
             return res.status(200).json({
                 status: 'ERR',
                 message: 'The token is required'
             })
         }
-        const response = await JwtService.refreshTokenJwtService(token);
+        const response = await JwtService.refreshTokenJwtService(token)
         return res.status(200).json(response)
     } catch (e) {
         return res.status(404).json({
