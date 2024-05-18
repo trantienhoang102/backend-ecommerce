@@ -52,7 +52,7 @@ const getDetailsProduct = async (req, res) => {
                 message: 'The productId is required'
             })
         }
-        console.log("productId", productId)
+        // console.log("productId", productId)
         const response = await ProductService.getDetailsProduct(productId);
         return res.status(200).json(response)
     } catch (e) {

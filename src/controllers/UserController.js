@@ -6,7 +6,7 @@ const bcrypt = require("bcrypt")
 
 const createUser = async (req, res) => {
     try {
-        console.log("req.body", req.body)
+        // console.log("req.body", req.body)
         const { name, email, password, confirmPassword, phone } = req.body
         const reg = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/
         const isCheckEmail = reg.test(email)
@@ -172,7 +172,7 @@ const getDetailsUser = async (req, res) => {
 }
 
 const refreshToken = async (req, res) => {
-    console.log('req.cookies.refresh_token', req.cookies)
+    // console.log('req.cookies.refresh_token', req.cookies)
     try {
         const token = req.cookies.refresh_token;
         if (!token) {

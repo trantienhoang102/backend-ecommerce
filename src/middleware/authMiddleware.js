@@ -26,10 +26,10 @@ const authMiddleWare = (req, res, next) => {
 
 const authUserMiddleWare = (req, res, next) => {
     const token = req.headers.token.split(' ')[1]
-    console.log("token authUserMiddleWare", token)
+    // console.log("token authUserMiddleWare", token)
 
     const userId = req.params.id
-    console.log("userId authUserMiddleWare", userId)
+    // console.log("userId authUserMiddleWare", userId)
 
     jwt.verify(token, process.env.ACCESS_TOKEN, function (err, user) {
         if (err) {
@@ -41,11 +41,11 @@ const authUserMiddleWare = (req, res, next) => {
         // else
         // next();
         const payload = user
-        console.log("user", user)
+        // console.log("user", user)
         if (payload?.isAdmin || payload?.id == userId) {
             next();
         } else {
-            console.log("authUserMiddleWare", payload?.isAdmin)
+            // console.log("authUserMiddleWare", payload?.isAdmin)
             return res.status(404).json({
                 message: 'The authentication',
                 status: 'ERROR'
